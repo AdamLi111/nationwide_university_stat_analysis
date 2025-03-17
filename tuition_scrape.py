@@ -55,8 +55,6 @@ def get_rating(university_states):
     for name, state in university_states.items():
         name_cleaned = ("-".join(name.split(" "))).lower()
         state_cleaned = ("-".join(state.split(" "))).lower()
-        if "&" in state_cleaned:
-            state_cleaned = "johnson-and-wales-university-providence"
         link = f"https://www.collegesimply.com/colleges/{state_cleaned}/{name_cleaned}/reviews/"
 
         req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
@@ -89,6 +87,41 @@ def get_rating(university_states):
     return uni_ratings
 
 
+def get_admission(university_states):
+    missing_universities = []  # Track universities that return 404 errors
+
+    for name, state in university_states.items():
+        name_cleaned = ("-".join(name.split(" "))).lower()
+        state_cleaned = ("-".join(state.split(" "))).lower()
+        link = f"https://www.collegesimply.com/colleges/{state_cleaned}/{name_cleaned}/admission/"
+
+        req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
+        try:
+            html = urlopen(req)
+            bs = BeautifulSoup(html.read(), "html.parser")
+
+            # ✅ Find all admission spans
+            admission_element = bs.select_one("td.text-right.pr-0.font-weight-bold")
+
+            # ✅ Extract ratings, or return "NA" if not found
+            admission = admission_element.text.strip() if admission_element else ["NA"]
+
+            print(f"✅ Admission Standards for {name}: {admission}")  # Debugging output
+
+        except Exception as e:
+            print(f"⚠️ Error fetching admission standard for {name}: {e}")
+            admission = ["NA"]  # Mark as NA if there's an error
+            missing_universities.append((name, link))  # Track universities with failed URLs
+
+        time.sleep(1)  # Prevent rate-limiting
+
+        # Debug: Print universities that failed due to 404 errors
+        if missing_universities:
+            print("\n🚨 WARNING: The following universities returned 404 errors:")
+            for uni, url in missing_universities:
+                print(f"- {uni} → {url}")
+    return admission
+
 def main():
     tuition_data = scrape_NE()
     print(tuition_data)
@@ -101,7 +134,8 @@ def main():
 
     local_states = {'Harvard University': 'Massachusetts', 'Boston University': 'Massachusetts', 'Yale University': 'Connecticut', 'Boston College': 'Massachusetts', 'Brown University': 'Rhode Island', 'Massachusetts Institute of Technology': 'Massachusetts', 'Northeastern University': 'Massachusetts', 'Dartmouth College': 'New Hampshire', 'Quinnipiac University': 'Connecticut', 'Tufts University': 'Massachusetts', 'Rhode Island School of Design': 'Rhode Island', 'Emerson College': 'Massachusetts', 'Babson College': 'Massachusetts', 'Amherst College': 'Massachusetts', 'Bentley University': 'Massachusetts', 'Brandeis University': 'Massachusetts', 'Williams College': 'Massachusetts', 'Providence College': 'Rhode Island', 'Dean College': 'Massachusetts', 'Wesleyan University': 'Connecticut', 'Fairfield University': 'Connecticut', 'Colby College': 'Maine', 'Sacred Heart University': 'Connecticut', 'Wellesley College': 'Massachusetts', 'Middlebury College': 'Vermont', 'Endicott College': 'Massachusetts', 'Bryant University': 'Rhode Island', 'Berklee College of Music': 'Massachusetts', 'University of New Haven': 'Connecticut', 'Merrimack College': 'Massachusetts', 'Assumption College': 'Massachusetts', 'Salve Regina University': 'Rhode Island', 'Suffolk University': 'Massachusetts', 'Curry College': 'Massachusetts', 'Worcester Polytechnic Institute': 'Massachusetts', 'Trinity College': 'Connecticut', 'University of Hartford': 'Connecticut', 'Norwich University': 'Vermont', 'Stonehill College': 'Massachusetts', 'Wentworth Institute of Technology': 'Massachusetts', 'Bowdoin College': 'Maine', 'Clark University': 'Massachusetts', 'Roger Williams University': 'Rhode Island', 'Simmons University': 'Massachusetts', 'Smith College': 'Massachusetts', 'Springfield College': 'Massachusetts', 'Emmanuel College': 'Massachusetts', 'Olin College of Engineering': 'Massachusetts', 'Western New England University': 'Massachusetts', 'American International College': 'Massachusetts', 'Mount Holyoke College': 'Massachusetts', 'Nichols College': 'Massachusetts', 'Mitchell College': 'Connecticut', 'College of the Holy Cross': 'Massachusetts', 'Champlain College': 'Vermont', 'Saint Anselm College': 'New Hampshire', 'Bates College': 'Maine', 'Wheaton College': 'Massachusetts', 'Fisher College': 'Massachusetts', 'Southern New Hampshire University': 'New Hampshire', 'University of New England': 'Maine', 'Lesley University': 'Massachusetts', 'University of Bridgeport': 'Connecticut', 'New England College': 'New Hampshire', 'Husson University': 'Maine', 'Becker College': 'Hamilton County', 'Lasell College': 'Massachusetts', 'Regis College': 'Massachusetts', 'Connecticut College': 'Connecticut', 'Gordon College': 'Massachusetts', 'Cambridge College': 'Massachusetts', 'Albertus Magnus College': 'Connecticut', "Saint Michael's College": 'Vermont', 'Anna Maria College': 'Massachusetts', 'Colby Sawyer College': 'New Hampshire', "Bard College at Simon's Rock": 'Massachusetts', 'Hampshire College': 'Massachusetts', 'Eastern Nazarene College': 'Massachusetts', 'Bennington College': 'Vermont', 'Benjamin Franklin Institute of Technology': 'Suffolk County', 'University of Saint Joseph': 'Connecticut', 'Boston Architectural College': 'Massachusetts', 'Franklin Pierce University': 'New Hampshire', 'New England Institute of Technology': 'Rhode Island', 'Green Mountain College': 'Vermont', 'College of Our Lady of the Elms': 'Massachusetts'}
     print(local_states)
-    print(get_rating(local_states))
+    print(get_admission(local_states))
+    #print(get_rating(local_states))
 
 
 if __name__ == "__main__":
