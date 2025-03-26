@@ -1,9 +1,13 @@
+import numpy as np
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
 import re
 from geopy.geocoders import Nominatim
 import time
-from radar_chart import draw_radar_chart
+
+from matplotlib import pyplot as plt
+
+from utils import draw_radar_chart, compute_score
 import json
 
 def scrape_NE():
@@ -108,7 +112,7 @@ def parse_ratings():
     parse the uni_ratings.json file and return it in a dictionary
     :return: a dictionary that contains all ratings data
     '''
-    with open('uni_ratings.json', 'r') as infile:
+    with open('data/uni_ratings.json', 'r') as infile:
         uni_ratings = json.load(infile)
     cleaned_ratings = {}
     for university, ratings in uni_ratings.items():
@@ -120,23 +124,23 @@ def parse_ratings():
                     new_ratings.append(int(rating.split('/')[0]))
                 except ValueError:
                     # If conversion fails, set a default value (or handle it differently)
-                    new_ratings.append(None)
+                    new_ratings.append(int(0))
             else:
                 # If the rating is "NA" or another value, handle accordingly
-                new_ratings.append(None)
+                new_ratings.append(int(0))
         cleaned_ratings[university] = new_ratings
     return cleaned_ratings
 
-def try_drawing(dct: dict):
+def get_edu_score(dct: dict):
     '''
     test run that draws the first couple of universities' radar chart
     :param dct: uni_ratings dictionary
-    :return: radar charts
+    :return: a dictionary that contains the educational score of the universities
     '''
-    values = list(dct.items())
-    print(values)
-    for (k, v) in values[:5]:
-        draw_radar_chart(k, v)
+    edu_score = {}
+    for k, v in dct.items():
+        edu_score[k] = compute_score(v)
+    return edu_score
 
 def get_states(tuition: dict):
     '''
@@ -151,6 +155,56 @@ def get_states(tuition: dict):
             university_states[university] = state
         time.sleep(1)  # Pause to prevent API rate limits
     return university_states
+
+
+def plot_linear_regression(tuition_file, edu_scores_file):
+    # Load tuition fees data
+    with open(tuition_file, 'r') as f:
+        tuition_data = json.load(f)
+
+    # Load educational scores data
+    with open(edu_scores_file, 'r') as f:
+        edu_scores = json.load(f)
+
+    # Extract common universities
+    common_unis = set(tuition_data.keys()).intersection(edu_scores.keys())
+
+    # Prepare data lists
+    x = []  # tuition fees
+    y = []  # educational scores
+    names = []  # university names
+    for uni in common_unis:
+        x.append(tuition_data[uni])
+        y.append(edu_scores[uni])
+        names.append(uni)
+
+    # Convert lists to numpy arrays for regression
+    x_np = np.array(x)
+    y_np = np.array(y)
+
+    # Perform linear regression: y = m*x + b
+    m, b = np.polyfit(x_np, y_np, 1)
+
+    # Generate points for regression line
+    x_line = np.linspace(min(x_np), max(x_np), 100)
+    y_line = m * x_line + b
+
+    # Plot scatter and regression line
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x_np, y_np, color='blue', label='Data Points')
+    plt.plot(x_line, y_line, color='red', label=f'Linear Regression: y={m:.2e}x + {b:.2f}')
+
+    # Annotate each point with the university name
+    for xi, yi, name in zip(x_np, y_np, names):
+        plt.annotate(name, (xi, yi), textcoords="offset points", xytext=(5, 5), fontsize=8)
+
+    plt.xlabel("Tuition Fees")
+    plt.ylabel("Educational Score")
+    plt.title("Linear Regression: Tuition Fees vs Educational Score")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
 
 def main():
 
@@ -167,7 +221,13 @@ def main():
     ###########################################################################
 
     uni_ratings = parse_ratings()
-    try_drawing(uni_ratings)
+
+    edu_score = get_edu_score(uni_ratings)
+    print(edu_score)
+
+    plot_linear_regression("data/tuition_data.json", "data/edu_scores.json")
+
+
 
 
 if __name__ == "__main__":
