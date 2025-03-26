@@ -1,11 +1,16 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
-from urllib.parse import quote
 import re
 from geopy.geocoders import Nominatim
 import time
+from radar_chart import draw_radar_chart
+import json
 
 def scrape_NE():
+    '''
+    scrapes the tuition data of all universities in New England area
+    :return: a dictionary with the name of the university be the key and tuition be the value
+    '''
     data = {}
     ma_pages = 5
     for page in range(0, ma_pages + 1):
@@ -36,6 +41,11 @@ def scrape_NE():
 
 
 def get_state(university_name):
+    '''
+    use an API called geolocator to get the university's state based on its name
+    :param university_name: self-explanatory name
+    :return: the states of the universities
+    '''
     geolocator = Nominatim(user_agent="university_locator")
     try:
         location = geolocator.geocode(university_name + ", USA", timeout=1)
@@ -48,6 +58,11 @@ def get_state(university_name):
 
 
 def get_rating(university_states):
+    '''
+    scrape the website and get the rating of the universities
+    :param university_states: states of the university, which will be part of the website's address
+    :return: the rating of universiteis in a dictionary
+    '''
     ratings = []
     uni_ratings = {}
     missing_universities = []  # Track universities that return 404 errors
@@ -55,6 +70,8 @@ def get_rating(university_states):
     for name, state in university_states.items():
         name_cleaned = ("-".join(name.split(" "))).lower()
         state_cleaned = ("-".join(state.split(" "))).lower()
+        if "&" in state_cleaned:
+            state_cleaned = "johnson-and-wales-university-providence"
         link = f"https://www.collegesimply.com/colleges/{state_cleaned}/{name_cleaned}/reviews/"
 
         req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
@@ -86,56 +103,71 @@ def get_rating(university_states):
 
     return uni_ratings
 
+def parse_ratings():
+    '''
+    parse the uni_ratings.json file and return it in a dictionary
+    :return: a dictionary that contains all ratings data
+    '''
+    with open('uni_ratings.json', 'r') as infile:
+        uni_ratings = json.load(infile)
+    cleaned_ratings = {}
+    for university, ratings in uni_ratings.items():
+        new_ratings = []
+        for rating in ratings:
+            # Check if the rating is in the form "7/10"
+            if isinstance(rating, str) and '/' in rating:
+                try:
+                    new_ratings.append(int(rating.split('/')[0]))
+                except ValueError:
+                    # If conversion fails, set a default value (or handle it differently)
+                    new_ratings.append(None)
+            else:
+                # If the rating is "NA" or another value, handle accordingly
+                new_ratings.append(None)
+        cleaned_ratings[university] = new_ratings
+    return cleaned_ratings
 
-def get_admission(university_states):
-    missing_universities = []  # Track universities that return 404 errors
+def try_drawing(dct: dict):
+    '''
+    test run that draws the first couple of universities' radar chart
+    :param dct: uni_ratings dictionary
+    :return: radar charts
+    '''
+    values = list(dct.items())
+    print(values)
+    for (k, v) in values[:5]:
+        draw_radar_chart(k, v)
 
-    for name, state in university_states.items():
-        name_cleaned = ("-".join(name.split(" "))).lower()
-        state_cleaned = ("-".join(state.split(" "))).lower()
-        link = f"https://www.collegesimply.com/colleges/{state_cleaned}/{name_cleaned}/admission/"
-
-        req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
-        try:
-            html = urlopen(req)
-            bs = BeautifulSoup(html.read(), "html.parser")
-
-            # ✅ Find all admission spans
-            admission_element = bs.select_one("td.text-right.pr-0.font-weight-bold")
-
-            # ✅ Extract ratings, or return "NA" if not found
-            admission = admission_element.text.strip() if admission_element else ["NA"]
-
-            print(f"✅ Admission Standards for {name}: {admission}")  # Debugging output
-
-        except Exception as e:
-            print(f"⚠️ Error fetching admission standard for {name}: {e}")
-            admission = ["NA"]  # Mark as NA if there's an error
-            missing_universities.append((name, link))  # Track universities with failed URLs
-
-        time.sleep(1)  # Prevent rate-limiting
-
-        # Debug: Print universities that failed due to 404 errors
-        if missing_universities:
-            print("\n🚨 WARNING: The following universities returned 404 errors:")
-            for uni, url in missing_universities:
-                print(f"- {uni} → {url}")
-    return admission
+def get_states(tuition: dict):
+    '''
+    get the state that the university is in based on the university's name
+    :param tuition: tuition data, which contains all universities and their tuition
+    :return: a dictionary where the key is the university and the value is their corresponding state
+    '''
+    university_states = {}
+    for university in tuition.keys():
+        state = get_state(university)
+        if state:
+            university_states[university] = state
+        time.sleep(1)  # Pause to prevent API rate limits
+    return university_states
 
 def main():
-    tuition_data = scrape_NE()
-    print(tuition_data)
-    university_states = {}
-    # for university in tuition_data.keys():
-    #     state = get_state(university)
-    #     if state:
-    #         university_states[university] = state
-    #     time.sleep(1)  # Pause to prevent API rate limits
 
-    local_states = {'Harvard University': 'Massachusetts', 'Boston University': 'Massachusetts', 'Yale University': 'Connecticut', 'Boston College': 'Massachusetts', 'Brown University': 'Rhode Island', 'Massachusetts Institute of Technology': 'Massachusetts', 'Northeastern University': 'Massachusetts', 'Dartmouth College': 'New Hampshire', 'Quinnipiac University': 'Connecticut', 'Tufts University': 'Massachusetts', 'Rhode Island School of Design': 'Rhode Island', 'Emerson College': 'Massachusetts', 'Babson College': 'Massachusetts', 'Amherst College': 'Massachusetts', 'Bentley University': 'Massachusetts', 'Brandeis University': 'Massachusetts', 'Williams College': 'Massachusetts', 'Providence College': 'Rhode Island', 'Dean College': 'Massachusetts', 'Wesleyan University': 'Connecticut', 'Fairfield University': 'Connecticut', 'Colby College': 'Maine', 'Sacred Heart University': 'Connecticut', 'Wellesley College': 'Massachusetts', 'Middlebury College': 'Vermont', 'Endicott College': 'Massachusetts', 'Bryant University': 'Rhode Island', 'Berklee College of Music': 'Massachusetts', 'University of New Haven': 'Connecticut', 'Merrimack College': 'Massachusetts', 'Assumption College': 'Massachusetts', 'Salve Regina University': 'Rhode Island', 'Suffolk University': 'Massachusetts', 'Curry College': 'Massachusetts', 'Worcester Polytechnic Institute': 'Massachusetts', 'Trinity College': 'Connecticut', 'University of Hartford': 'Connecticut', 'Norwich University': 'Vermont', 'Stonehill College': 'Massachusetts', 'Wentworth Institute of Technology': 'Massachusetts', 'Bowdoin College': 'Maine', 'Clark University': 'Massachusetts', 'Roger Williams University': 'Rhode Island', 'Simmons University': 'Massachusetts', 'Smith College': 'Massachusetts', 'Springfield College': 'Massachusetts', 'Emmanuel College': 'Massachusetts', 'Olin College of Engineering': 'Massachusetts', 'Western New England University': 'Massachusetts', 'American International College': 'Massachusetts', 'Mount Holyoke College': 'Massachusetts', 'Nichols College': 'Massachusetts', 'Mitchell College': 'Connecticut', 'College of the Holy Cross': 'Massachusetts', 'Champlain College': 'Vermont', 'Saint Anselm College': 'New Hampshire', 'Bates College': 'Maine', 'Wheaton College': 'Massachusetts', 'Fisher College': 'Massachusetts', 'Southern New Hampshire University': 'New Hampshire', 'University of New England': 'Maine', 'Lesley University': 'Massachusetts', 'University of Bridgeport': 'Connecticut', 'New England College': 'New Hampshire', 'Husson University': 'Maine', 'Becker College': 'Hamilton County', 'Lasell College': 'Massachusetts', 'Regis College': 'Massachusetts', 'Connecticut College': 'Connecticut', 'Gordon College': 'Massachusetts', 'Cambridge College': 'Massachusetts', 'Albertus Magnus College': 'Connecticut', "Saint Michael's College": 'Vermont', 'Anna Maria College': 'Massachusetts', 'Colby Sawyer College': 'New Hampshire', "Bard College at Simon's Rock": 'Massachusetts', 'Hampshire College': 'Massachusetts', 'Eastern Nazarene College': 'Massachusetts', 'Bennington College': 'Vermont', 'Benjamin Franklin Institute of Technology': 'Suffolk County', 'University of Saint Joseph': 'Connecticut', 'Boston Architectural College': 'Massachusetts', 'Franklin Pierce University': 'New Hampshire', 'New England Institute of Technology': 'Rhode Island', 'Green Mountain College': 'Vermont', 'College of Our Lady of the Elms': 'Massachusetts'}
-    print(local_states)
-    print(get_admission(local_states))
+    ###########################################################################
+    # the following code will do the web scraping job, which takes a long time.
+    # Since we've already scraped some data, which have been stored in json files
+    # only run the following code when you actually want to scrape for more data.
+
+    #tuition_data = scrape_NE()
+    #print(tuition_data)
+    #get_states(tuition_data)
+    #print(local_states)
     #print(get_rating(local_states))
+    ###########################################################################
+
+    uni_ratings = parse_ratings()
+    try_drawing(uni_ratings)
 
 
 if __name__ == "__main__":

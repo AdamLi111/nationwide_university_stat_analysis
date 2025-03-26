@@ -1,0 +1,548 @@
+{
+    "Harvard University": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Boston University": [
+        "9/10",
+        "10/10",
+        "10/10",
+        "8/10",
+        "10/10"
+    ],
+    "Yale University": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Boston College": [
+        "9/10",
+        "10/10",
+        "9/10",
+        "10/10",
+        "10/10"
+    ],
+    "Brown University": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Massachusetts Institute of Technology": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Northeastern University": [
+        "8/10",
+        "10/10",
+        "7/10",
+        "8/10",
+        "9/10"
+    ],
+    "Dartmouth College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Quinnipiac University": [
+        "8/10",
+        "7/10",
+        "8/10",
+        "8/10",
+        "6/10"
+    ],
+    "Tufts University": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Rhode Island School of Design": [
+        "9/10",
+        "10/10",
+        "10/10",
+        "7/10",
+        "7/10"
+    ],
+    "Emerson College": [
+        "7/10",
+        "10/10",
+        "6/10",
+        "7/10",
+        "2/10"
+    ],
+    "Babson College": [
+        "8/10",
+        "10/10",
+        "7/10",
+        "9/10",
+        "9/10"
+    ],
+    "Amherst College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Bentley University": [
+        "8/10",
+        "9/10",
+        "8/10",
+        "9/10",
+        "6/10"
+    ],
+    "Brandeis University": [
+        "9/10",
+        "10/10",
+        "9/10",
+        "8/10",
+        "7/10"
+    ],
+    "Williams College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Providence College": [
+        "8/10",
+        "9/10",
+        "9/10",
+        "8/10",
+        "5/10"
+    ],
+    "Dean College": [
+        "NA",
+        "3/10",
+        "4/10",
+        "6/10",
+        "NA"
+    ],
+    "Wesleyan University": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "9/10",
+        "10/10"
+    ],
+    "Fairfield University": [
+        "8/10",
+        "9/10",
+        "8/10",
+        "8/10",
+        "4/10"
+    ],
+    "Colby College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Sacred Heart University": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Wellesley College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Middlebury College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Endicott College": [
+        "7/10",
+        "8/10",
+        "6/10",
+        "7/10",
+        "2/10"
+    ],
+    "Bryant University": [
+        "8/10",
+        "9/10",
+        "6/10",
+        "8/10",
+        "5/10"
+    ],
+    "Berklee College of Music": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "University of New Haven": [
+        "5/10",
+        "6/10",
+        "4/10",
+        "5/10",
+        "2/10"
+    ],
+    "Merrimack College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Assumption College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Salve Regina University": [
+        "7/10",
+        "8/10",
+        "6/10",
+        "7/10",
+        "5/10"
+    ],
+    "Suffolk University": [
+        "6/10",
+        "8/10",
+        "6/10",
+        "6/10",
+        "4/10"
+    ],
+    "Curry College": [
+        "6/10",
+        "5/10",
+        "8/10",
+        "6/10",
+        "5/10"
+    ],
+    "Worcester Polytechnic Institute": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Trinity College": [
+        "9/10",
+        "10/10",
+        "10/10",
+        "9/10",
+        "10/10"
+    ],
+    "University of Hartford": [
+        "7/10",
+        "8/10",
+        "9/10",
+        "5/10",
+        "7/10"
+    ],
+    "Norwich University": [
+        "6/10",
+        "8/10",
+        "6/10",
+        "6/10",
+        "6/10"
+    ],
+    "Stonehill College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Wentworth Institute of Technology": [
+        "7/10",
+        "8/10",
+        "6/10",
+        "7/10",
+        "3/10"
+    ],
+    "Bowdoin College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Clark University": [
+        "8/10",
+        "10/10",
+        "10/10",
+        "6/10",
+        "8/10"
+    ],
+    "Roger Williams University": [
+        "7/10",
+        "7/10",
+        "8/10",
+        "6/10",
+        "3/10"
+    ],
+    "Simmons University": [
+        "NA"
+    ],
+    "Smith College": [
+        "9/10",
+        "10/10",
+        "10/10",
+        "8/10",
+        "10/10"
+    ],
+    "Springfield College": [
+        "7/10",
+        "7/10",
+        "8/10",
+        "7/10",
+        "7/10"
+    ],
+    "Emmanuel College": [
+        "6/10",
+        "8/10",
+        "6/10",
+        "6/10",
+        "5/10"
+    ],
+    "Olin College of Engineering": [
+        "NA"
+    ],
+    "Western New England University": [
+        "7/10",
+        "7/10",
+        "7/10",
+        "7/10",
+        "5/10"
+    ],
+    "American International College": [
+        "3/10",
+        "2/10",
+        "3/10",
+        "4/10",
+        "1/10"
+    ],
+    "Mount Holyoke College": [
+        "9/10",
+        "10/10",
+        "10/10",
+        "8/10",
+        "9/10"
+    ],
+    "Nichols College": [
+        "NA"
+    ],
+    "Mitchell College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "College of the Holy Cross": [
+        "9/10",
+        "10/10",
+        "10/10",
+        "8/10",
+        "9/10"
+    ],
+    "Champlain College": [
+        "7/10",
+        "9/10",
+        "6/10",
+        "7/10",
+        "4/10"
+    ],
+    "Saint Anselm College": [
+        "7/10",
+        "6/10",
+        "8/10",
+        "7/10",
+        "6/10"
+    ],
+    "Bates College": [
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10",
+        "10/10"
+    ],
+    "Wheaton College": [
+        "NA"
+    ],
+    "Fisher College": [
+        "5/10",
+        "5/10",
+        "4/10",
+        "5/10",
+        "2/10"
+    ],
+    "Southern New Hampshire University": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "University of New England": [
+        "NA",
+        "6/10",
+        "7/10",
+        "6/10",
+        "NA"
+    ],
+    "Lesley University": [
+        "NA",
+        "6/10",
+        "8/10",
+        "4/10",
+        "NA"
+    ],
+    "University of Bridgeport": [
+        "3/10",
+        "3/10",
+        "3/10",
+        "3/10",
+        "1/10"
+    ],
+    "New England College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Husson University": [
+        "NA",
+        "4/10",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Becker College": [
+        "NA"
+    ],
+    "Lasell College": [
+        "5/10",
+        "6/10",
+        "6/10",
+        "4/10",
+        "8/10"
+    ],
+    "Regis College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Connecticut College": [
+        "9/10",
+        "10/10",
+        "9/10",
+        "9/10",
+        "8/10"
+    ],
+    "Gordon College": [
+        "NA"
+    ],
+    "Cambridge College": [
+        "NA"
+    ],
+    "Albertus Magnus College": [
+        "NA",
+        "3/10",
+        "4/10",
+        "6/10",
+        "NA"
+    ],
+    "Saint Michael's College": [
+        "NA"
+    ],
+    "Anna Maria College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Colby Sawyer College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Bard College at Simon's Rock": [
+        "NA"
+    ],
+    "Hampshire College": [
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA"
+    ],
+    "Eastern Nazarene College": [
+        "6/10",
+        "5/10",
+        "6/10",
+        "6/10",
+        "6/10"
+    ],
+    "Bennington College": [
+        "7/10",
+        "9/10",
+        "10/10",
+        "5/10",
+        "8/10"
+    ],
+    "Benjamin Franklin Institute of Technology": [
+        "NA"
+    ],
+    "University of Saint Joseph": [
+        "NA"
+    ],
+    "Boston Architectural College": [
+        "NA"
+    ],
+    "Franklin Pierce University": [
+        "4/10",
+        "3/10",
+        "5/10",
+        "4/10",
+        "3/10"
+    ],
+    "New England Institute of Technology": [
+        "NA"
+    ],
+    "Green Mountain College": [
+        "NA"
+    ],
+    "College of Our Lady of the Elms": [
+        "7/10",
+        "7/10",
+        "6/10",
+        "7/10",
+        "8/10"
+    ]
+}
