@@ -58,7 +58,7 @@ def draw_radar_chart(name, values):
 
     # Display the plot with a title showing the calculated area
     plt.title(f"{name}'s educational quality score: {area:.2f}\n")
-    #plt.show()
+    plt.show()
 
     # Return the calculated area
     return area

@@ -227,6 +227,10 @@ def main():
 
     plot_linear_regression("data/tuition_data.json", "data/edu_scores.json")
 
+    draw_radar_chart("Harvard University", [10, 10, 10, 10, 10])
+    draw_radar_chart("Northeastern University", [8, 10, 7, 8, 9])
+    draw_radar_chart("Boston University", [9, 10, 10, 8, 10])
+
 
 
 
