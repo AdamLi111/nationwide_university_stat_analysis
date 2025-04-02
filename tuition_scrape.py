@@ -10,37 +10,44 @@ from matplotlib import pyplot as plt
 from utils import draw_radar_chart, compute_score
 import json
 
-def scrape_NE():
+def scrape_US():
     '''
-    scrapes the tuition data of all universities in New England area
-    :return: a dictionary with the name of the university be the key and tuition be the value
+    Scrapes tuition data for all 4-year private universities in the U.S.
+    :return: a dictionary { university_name: tuition }
     '''
     data = {}
-    ma_pages = 5
-    for page in range(0, ma_pages + 1):
-        MA_LINK = (
-            f"https://www.collegesimply.com/colleges/search?sort=&place=&fr=&fm=tuition-in-state&lm="
-            f"&years=4&type=private&gpa=&sat=&act=&admit=comp&field=&major=&radius=300&zip="
-            f"&state=new-england&size=&tuition-fees=&net-price=&page={page}&pp=/colleges/search")
-        req = Request(MA_LINK, headers={'User-Agent': 'Mozilla/5.0'})
-        html = urlopen(req)
-        bs = BeautifulSoup(html.read(), "html.parser")
+    max_pages = 5  # Adjust if needed
 
-        # Use CSS selector to find all college cards
+    for page in range(1, max_pages + 1):
+        url = f"https://www.collegesimply.com/colleges/search?sort=&place=&fr=&fm=tuition-in-state&lm=&years=4&gpa=&sat=&act=&admit=comp&field=&major=&radius=300&zip=&state=&size=&tuition-fees=&net-price=&page={page}&pp=/colleges/search"
+        print(f"🔍 Scraping page {page}...")
+
+        req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        try:
+            html = urlopen(req)
+            bs = BeautifulSoup(html.read(), "html.parser")
+        except Exception as e:
+            print(f"❌ Error opening page {page}: {e}")
+            break
+
         cards = bs.select('div.col-sm-6.col-xl-4.mb-5.hover-animate')
 
+        if not cards:
+            print("✅ No more results found. Ending scrape.")
+            break
+
         for card in cards:
-            # Get the university name from the <h3> tag
             name_tag = card.find('h3', class_='h6 card-title')
-            # Get the tuition from the <span> tag within an <h4> tag
             h4_tag = card.find('h4')
             tuition_tag = h4_tag.find('span', class_='text-primary') if h4_tag else None
 
             if name_tag and tuition_tag:
-                full_name = name_tag.get_text(strip=True)
-                name = full_name.split('Private')[0].strip() if 'Private' in full_name else full_name  # Extract university name
-                tuition = int(re.sub(r'[^0-9]', '', tuition_tag.get_text(strip=True)))  # Convert tuition to int
+                name = name_tag.get_text(strip=True)
+                tuition = int(re.sub(r'[^0-9]', '', tuition_tag.get_text(strip=True)))
                 data[name] = tuition
+                print(f"{name}: {tuition}")
+
+    print(f"\n✅ Finished scraping {len(data)} universities.\n")
     return data
 
 
@@ -218,7 +225,9 @@ def main():
     #get_states(tuition_data)
     #print(local_states)
     #print(get_rating(local_states))
+    #us_data = scrape_US()
     ###########################################################################
+
 
     uni_ratings = parse_ratings()
 
