@@ -4,10 +4,11 @@ from urllib.request import urlopen, Request
 import re
 from geopy.geocoders import Nominatim
 import time
+from utils import *
+import os
 
 from matplotlib import pyplot as plt
 
-from utils import draw_radar_chart, compute_score
 import json
 
 def scrape_US():
@@ -16,7 +17,7 @@ def scrape_US():
     :return: a dictionary { university_name: tuition }
     '''
     data = {}
-    max_pages = 5  # Adjust if needed
+    max_pages = 10
 
     for page in range(1, max_pages + 1):
         url = f"https://www.collegesimply.com/colleges/search?sort=&place=&fr=&fm=tuition-in-state&lm=&years=4&gpa=&sat=&act=&admit=comp&field=&major=&radius=300&zip=&state=&size=&tuition-fees=&net-price=&page={page}&pp=/colleges/search"
@@ -42,10 +43,11 @@ def scrape_US():
             tuition_tag = h4_tag.find('span', class_='text-primary') if h4_tag else None
 
             if name_tag and tuition_tag:
-                name = name_tag.get_text(strip=True)
-                tuition = int(re.sub(r'[^0-9]', '', tuition_tag.get_text(strip=True)))
+                full_name = name_tag.get_text(strip=True)
+                name = full_name.split('Private')[
+                    0].strip() if 'Private' in full_name else full_name  # Extract university name
+                tuition = int(re.sub(r'[^0-9]', '', tuition_tag.get_text(strip=True)))  # Convert tuition to int
                 data[name] = tuition
-                print(f"{name}: {tuition}")
 
     print(f"\n✅ Finished scraping {len(data)} universities.\n")
     return data
@@ -116,10 +118,10 @@ def get_rating(university_states):
 
 def parse_ratings():
     '''
-    parse the uni_ratings.json file and return it in a dictionary
+    parse the uni_ratings_US.json file and return it in a dictionary
     :return: a dictionary that contains all ratings data
     '''
-    with open('data/uni_ratings.json', 'r') as infile:
+    with open('data/uni_ratings_US.json', 'r') as infile:
         uni_ratings = json.load(infile)
     cleaned_ratings = {}
     for university, ratings in uni_ratings.items():
@@ -192,18 +194,39 @@ def plot_linear_regression(tuition_file, edu_scores_file):
     # Perform linear regression: y = m*x + b
     m, b = np.polyfit(x_np, y_np, 1)
 
+    print(m)
+    # Calculate predictions
+    y_pred = m * x_np + b
+
+    # Calculate R² (coefficient of determination)
+    residuals = y_np - y_pred
+    ss_res = np.sum(residuals**2)
+    ss_tot = np.sum((y_np - np.mean(y_np))**2)
+    r_squared = 1 - (ss_res / ss_tot)
+
+    # Calculate MSE (Mean Squared Error)
+    mse = np.mean((y_np - y_pred)**2)
+
+    # Print R² and MSE
+    print(f"R² : {r_squared:.4f}")
+    print(f"MSE (Mean Squared Error): {mse:.4f}")
+
     # Generate points for regression line
     x_line = np.linspace(min(x_np), max(x_np), 100)
     y_line = m * x_line + b
 
     # Plot scatter and regression line
     plt.figure(figsize=(10, 6))
-    plt.scatter(x_np, y_np, color='blue', label='Data Points')
+    plt.scatter(x_np, y_np, color='blue', label='University')
     plt.plot(x_line, y_line, color='red', label=f'Linear Regression: y={m:.2e}x + {b:.2f}')
 
-    # Annotate each point with the university name
-    for xi, yi, name in zip(x_np, y_np, names):
-        plt.annotate(name, (xi, yi), textcoords="offset points", xytext=(5, 5), fontsize=8)
+    # Add R² and MSE to the plot
+    plt.text(0.05, 0.95, f'R² = {r_squared:.4f}', transform=plt.gca().transAxes)
+    plt.text(0.05, 0.90, f'RMSE = 38.86', transform=plt.gca().transAxes)
+
+    # # Annotate each point with the university name
+    # for xi, yi, name in zip(x_np, y_np, names):
+    #     plt.annotate(name, (xi, yi), textcoords="offset points", xytext=(5, 5), fontsize=8)
 
     plt.xlabel("Tuition Fees")
     plt.ylabel("Educational Score")
@@ -213,6 +236,25 @@ def plot_linear_regression(tuition_file, edu_scores_file):
     plt.show()
 
 
+def filter_university_scores(uni_scores):
+    """
+    Removes any university that doesn't have exactly 5 rating elements.
+
+    Args:
+        uni_scores (dict): Dictionary with university names as keys and rating lists as values
+
+    Returns:
+        dict: Filtered dictionary containing only universities with exactly 5 ratings
+    """
+    filtered_scores = {}
+
+    for uni, ratings in uni_scores.items():
+        if len(ratings) == 5 and not all(0 == i for i in ratings):
+            filtered_scores[uni] = ratings
+
+    return filtered_scores
+
+
 def main():
 
     ###########################################################################
@@ -220,28 +262,15 @@ def main():
     # Since we've already scraped some data, which have been stored in json files
     # only run the following code when you actually want to scrape for more data.
 
-    #tuition_data = scrape_NE()
+    #tuition_data = scrape_US()
     #print(tuition_data)
     #get_states(tuition_data)
     #print(local_states)
     #print(get_rating(local_states))
-    #us_data = scrape_US()
+
     ###########################################################################
 
-
-    uni_ratings = parse_ratings()
-
-    edu_score = get_edu_score(uni_ratings)
-    print(edu_score)
-
-    plot_linear_regression("data/tuition_data.json", "data/edu_scores.json")
-
-    draw_radar_chart("Harvard University", [10, 10, 10, 10, 10])
-    draw_radar_chart("Northeastern University", [8, 10, 7, 8, 9])
-    draw_radar_chart("Boston University", [9, 10, 10, 8, 10])
-
-
-
+    plot_linear_regression(tuition_file='data/tuition_US.json', edu_scores_file='data/edu_score_US.json')
 
 if __name__ == "__main__":
     main()

@@ -85,5 +85,3 @@ def compute_score(values: list):
 # Example usage:
 # area = draw_radar_chart("Northeastern University", [7, 9, 0, 4, 0])
 #print(area)
-
-print(compute_score([7, 9, 0, 4, 0]))
